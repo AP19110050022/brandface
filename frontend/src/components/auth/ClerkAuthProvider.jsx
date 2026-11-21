@@ -29,43 +29,12 @@ export default function ClerkAuthProvider({ children }) {
   const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) {
-      return undefined;
-    }
-
-    const root = document.documentElement;
-    const viewport = document.querySelector('meta[name="viewport"]');
-    const previousViewport = viewport?.getAttribute("content");
-    root.classList.add("native-app");
-    viewport?.setAttribute(
-      "content",
-      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
-    );
-
-    return () => {
-      root.classList.remove("native-app");
-      if (previousViewport) {
-        viewport?.setAttribute("content", previousViewport);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     let cancelled = false;
     const load = async (attempt = 0) => {
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch(`${BACKEND_URL}/api/clerk/config`, {
-          signal: controller.signal,
-        });
-        const cfg = await response.json();
+        const cfg = await (await fetch(`${BACKEND_URL}/api/clerk/config`)).json();
         if (cfg.enabled) return cancelled || setConfig(cfg);
-      } catch {
-        // The retry below handles offline launches and backend restarts.
-      } finally {
-        window.clearTimeout(timeout);
-      }
+      } catch {}
       if (cancelled) return;
       if (attempt >= 20) return setUnavailable(true);
       setTimeout(() => load(attempt + 1), 1500);
@@ -85,16 +54,7 @@ export default function ClerkAuthProvider({ children }) {
       </div>
     </div>
   );
-  if (!config) {
-    return (
-      <div className="grid min-h-screen place-items-center px-6 text-center text-white" data-testid="auth-config-loading">
-        <div>
-          <p className="text-lg font-extrabold">Opening HireAvatar</p>
-          <div className="creator-skeleton mx-auto mt-4 h-2 w-28 rounded-full" />
-        </div>
-      </div>
-    );
-  }
+  if (!config) return null;
   if (isNative) {
     return (
       <NativeClerkProvider publishableKey={config.publishable_key}>
