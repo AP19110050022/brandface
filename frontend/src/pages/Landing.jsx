@@ -36,7 +36,7 @@ export default function Landing() {
   if (isLoaded && isSignedIn) return <Navigate to="/app" replace />;
   return (
     <div className="min-h-screen text-white" data-testid="landing-page">
-      <div className="mx-auto max-w-xl px-5 pb-12 pt-10 sm:pt-16">
+      <div className="landing-content mx-auto max-w-xl px-5 pb-12 pt-10 sm:pt-16">
         <div className="flex items-center justify-between">
           <Logo size="text-[34px]" />
           <Link to="/sign-in" className="rounded-full bg-white/15 px-4 py-2 text-sm font-bold transition-colors hover:bg-white/25" data-testid="landing-login-button">Log in</Link>

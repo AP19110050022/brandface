@@ -1,0 +1,39 @@
+{
+  "summary": "Frontend-only check of the native layout, discovery loading and bundle fixes. Static/config checks: (1) .native-app sets --app-safe-top: max(var(--safe-area-inset-top,0px),28px). AppShell TopBar's .topbar gets that padding while its inner row stays h-[60px]. .mobile-bottom-nav and .app-main-content use --app-safe-bottom (min 12px). PASS. (2) ClerkAuthProvider adds maximum-scale=1/user-scalable=no plus the native-app class only when Capacitor.isNativePlatform(). The web viewport meta is unchanged ('width=device-width, initial-scale=1, viewport-fit=cover'), checked in the browser. index.css has overflow-x:hidden and text-size-adjust:100%. PASS. (3) Discover shows CreatorGridSkeleton (6 shimmer tiles, grid-cols-2 on mobile) while list===null. PASS. (4) publicApi/useApi have a 12000 ms timeout. A failed request sets loadError and shows creator-load-error with creator-load-retry-button. Retry clears the error, so the skeleton shows again. PASS for the first load. (5) /creators uses publicApi with no token. /saved/ids and save/unsave use the authenticated useApi. PASS. (6) App.js lazy-loads every secondary route behind a Suspense skeleton. Only Landing, Discover, AppShell and AdminShell load up front. main.dedbbe0b.js is 809,311 bytes gzipped (~790 KiB, matching CRA's 803.79 kB), below the 942.61 kB baseline. PASS. (7) NativeAuthScreen no longer contains 'Secure creator access' (0 hits in src and build). Email and password are compact fields in one grouped box with a divider. PASS. (8) Browser at 390x844 and 1920x1080 on /, /sign-in, /sign-up and /app (signed out, sends you to /): scrollWidth equals clientWidth on every page, no native-app class or native screen on the web, Clerk UI shows, no page/console errors. 8/8 PASS. (9) build/static/js matches android/app/src/main/assets/public and ios/App/App/public exactly, so cap sync is current. The synced capacitor.config.json matches the source. Capacitor core/android 8.6.2, compile/target SDK 36. Not checked: anything on a real Android/iPhone device (status-bar overlap, the real inset values, pinch-zoom lock), Gradle/Xcode builds (no SDK in the container), and the signed-in Discover screen in the browser (Clerk sign-in not automated, as instructed). Skeleton and retry were checked by reading the code and the built bundle only. API smoke: GET /api/creators 200 in ~0.2-0.4s; /api/me and /api/saved/ids return 401 without a token.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "AdminShell mobile header (native)", "issue": "<header className='topbar sticky ... h-[60px] ...'> has h-[60px] on the same element that .native-app .topbar pads with 28px+ top padding. With border-box, the content area shrinks to <=32px and the admin header content gets squeezed. AppShell avoids this because its h-[60px] is on the inner div; AdminShell should do the same.", "selector": "pages/admin/AdminShell.jsx:39", "priority": "MEDIUM"},
+      {"component": "AdminShell mobile bottom nav (native)", "issue": "Uses 'fixed inset-x-3 bottom-3' without the mobile-bottom-nav class, so it ignores --app-safe-bottom and can sit under the Android gesture bar or iPhone home indicator.", "selector": "pages/admin/AdminShell.jsx:46", "priority": "LOW"},
+      {"component": "CreatorProfile sticky Hire CTA (native)", "issue": "Fixed at bottom-[88px] with no safe-bottom term. On native the dock moves up by --app-safe-bottom (can be ~24-48px), so the CTA can overlap the dock.", "selector": "[data-testid=sticky-send-offer]", "priority": "LOW"}
+    ],
+    "integration_issues": [
+      {"flow": "Signed-in Discover first paint", "issue": "Discover only mounts after AppShell has `me`, which needs Clerk getToken plus authenticated GET /me. Until then AppShell shows a single centred Loader2 spinner (data-testid=app-loading). Switching /creators to publicApi does not remove this wait. The user's 'stuck on spinner' report may be this screen. It ends after the 12s timeout (SignInFailed), but it is still a lone spinner. Show the shell or skeleton while /me loads, or fetch creators alongside /me.", "affected_selectors": ["[data-testid=app-loading]"]},
+      {"flow": "Discover filter change after a successful load", "issue": "When list is already set, a failed reload (filter/search change) only sets loadError. The error UI shows only when list===null, so the user silently keeps the old results with no error or retry. Jobs and Businesses tabs (api.get without .catch) still spin forever on failure.", "affected_selectors": ["[data-testid=creator-load-error]", "[data-testid=job-grid]", "[data-testid=business-grid]"]}
+    ],
+    "design_issues": [
+      {"screen": "Native safe area (iOS)", "issues": ["Capacitor's --safe-area-inset-* CSS variables are injected by the Android SystemBars plugin. The rule has no env(safe-area-inset-top) fallback. On iOS the top falls back to a fixed 28px (notched iPhones need ~47-59px), while capacitor.config ios.contentInset='automatic' also insets the WebView, so iOS may double-pad or under-pad. Suggest: --app-safe-top: max(var(--safe-area-inset-top, env(safe-area-inset-top, 0px)), 28px), same for bottom, and check whether contentInset should be 'never' when using CSS insets. Needs device verification."]},
+      {"screen": "Landing (native)", "issues": ["Landing header uses a fixed pt-10 and no native safe-top. On edge-to-edge Android 15+/notched devices the logo and 'Log in' sit close to or under the status bar."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "AdminShell: move h-[60px] to an inner wrapper (as in AppShell TopBar). Add mobile-bottom-nav or the safe-bottom calc to the admin bottom nav.",
+    "Add the env(safe-area-inset-*) fallback inside --app-safe-top/--app-safe-bottom for iOS. Decide on ios.contentInset to avoid double padding. Check on a real iPhone and an Android 15 device.",
+    "Replace the AppShell `app-loading` lone spinner with the shell/skeleton so first paint after sign-in does not look stuck.",
+    "Discover: show an error/retry or toast when a reload fails while old results are shown. Add catch and retry to the Jobs/Businesses tab fetches.",
+    "Optional: offset the CreatorProfile sticky CTA by --app-safe-bottom on native. Add a native safe-top to the Landing header."
+  ],
+  "critical_code_review_comments": [
+    "Main chunk is still ~790 KiB gzipped. Landing and Discover/AppShell are eager, and both Clerk SDKs (web plus capacitor-clerk) are in main. Load the provider not in use lazily (native vs web) to cut it further.",
+    "ClerkAuthProvider fetches /api/clerk/config with plain fetch and no timeout, retrying 20x1.5s. On a hung network the first native screen is blank (returns null) for a long time with no loader.",
+    "touch-action: pan-x pan-y on html applies to the web as well, which disables pinch-zoom for web users (accessibility). Consider scoping it to .native-app."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% of executed web checks (8/8); 9/9 static checks pass with 3 UI and 2 loading-state gaps outside the requested scope"},
+  "test_credentials": "Not used (Clerk sign-in intentionally not automated).",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Native UI only renders under Capacitor. Web checks cannot prove the safe area works. Signed-in Discover (skeleton/retry) was checked by reading code only. A sign-in ticket flow is documented in /app/memory/test_credentials.md but needs the Clerk secret key, which was not accessed. Physical device and Gradle checks are still outstanding."
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
 import { useClerk } from "@/lib/clerk";
-import { ArrowLeft, Compass, Plus, Briefcase, MessageCircle, User, Bell, Search, Loader2, Bookmark, ShieldCheck, Ban } from "lucide-react";
+import { ArrowLeft, Compass, Plus, Briefcase, MessageCircle, User, Bell, Search, Bookmark, ShieldCheck, Ban } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { RoleChooser } from "@/components/RoleChooser";
 import { useMe } from "@/context/MeContext";
@@ -90,6 +90,33 @@ export const BlockedScreen = () => {
   );
 };
 
+const AppLoading = () => (
+  <div className="min-h-screen text-white" data-testid="app-loading">
+    <header className="topbar sticky top-0 z-30">
+      <div className="mx-auto flex h-[60px] max-w-6xl items-center justify-between px-4 sm:px-6">
+        <div className="creator-skeleton h-7 w-32 rounded-lg" />
+        <div className="flex gap-2">
+          <div className="creator-skeleton h-10 w-10 rounded-full" />
+          <div className="creator-skeleton h-10 w-10 rounded-full" />
+        </div>
+      </div>
+    </header>
+    <main className="app-main-content mx-auto max-w-6xl px-3.5 pt-4 sm:px-6">
+      <div className="creator-skeleton h-11 w-full rounded-full" />
+      <div className="mt-3 flex gap-2">
+        <div className="creator-skeleton h-9 w-16 rounded-full" />
+        <div className="creator-skeleton h-9 w-24 rounded-full" />
+        <div className="creator-skeleton h-9 w-20 rounded-full" />
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2.5 md:grid-cols-3 lg:grid-cols-4">
+        {Array.from({ length: 6 }, (_, index) => (
+          <div key={index} className="creator-skeleton aspect-[3/4.2] rounded-[20px] sm:aspect-[3/4]" />
+        ))}
+      </div>
+    </main>
+  </div>
+);
+
 export default function AppShell() {
   const { me, error, blocked } = useMe();
   const [plus, setPlus] = useState(false);
@@ -99,11 +126,8 @@ export default function AppShell() {
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   if (blocked) return <BlockedScreen />;
   if (!me) {
-    return (
-      <div className="grid min-h-screen place-items-center text-white" data-testid="app-loading">
-        {error ? <SignInFailed /> : <Loader2 className="h-8 w-8 animate-spin" />}
-      </div>
-    );
+    if (!error) return <AppLoading />;
+    return <div className="grid min-h-screen place-items-center text-white"><SignInFailed /></div>;
   }
   return (
     <div className="min-h-screen text-white">

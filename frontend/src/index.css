@@ -121,8 +121,8 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .native-app {
-    --app-safe-top: max(var(--safe-area-inset-top, 0px), 28px);
-    --app-safe-bottom: max(var(--safe-area-inset-bottom, 0px), 12px);
+    --app-safe-top: max(var(--safe-area-inset-top, env(safe-area-inset-top, 0px)), 28px);
+    --app-safe-bottom: max(var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)), 12px);
     background: #160D3D;
 }
 
@@ -143,6 +143,10 @@ h1, h2, h3, h4, .font-heading {
 .native-app .native-auth-screen {
     padding-top: max(28px, var(--app-safe-top));
     padding-bottom: calc(24px + var(--app-safe-bottom));
+}
+
+.native-app .landing-content {
+    padding-top: calc(var(--app-safe-top) + 1rem);
 }
 
 @keyframes rise {
