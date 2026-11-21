@@ -48,3 +48,4 @@ One account, + chooser (creator 3 steps / business 2 steps); 3 plans Per Video /
 - P2: Featured boost, AI matching, PDF contracts/invoices, multi-currency.
 - P2: Produce signed Android/iOS binaries on a workstation with Android SDK/Xcode; iOS also needs the capacitor-clerk Swift package linked in Xcode.
 - P1: Rebuild and test the APK on a real Android 15+ device and iPhone, checking system insets, signed-in Discover loading, and native Clerk return handling.
+- P0: User chose a React Native/Expo companion instead of Capacitor. This requires a separate Mobile App project; retain the existing web product and reuse its FastAPI/MongoDB APIs from the new app once created.
