@@ -3,12 +3,13 @@ import { useMemo } from "react";
 import { useAuth } from "@/lib/clerk";
 
 export const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-export const publicApi = axios.create({ baseURL: API });
+const REQUEST_TIMEOUT_MS = 12000;
+export const publicApi = axios.create({ baseURL: API, timeout: REQUEST_TIMEOUT_MS });
 
 export function useApi() {
   const { getToken } = useAuth();
   return useMemo(() => {
-    const inst = axios.create({ baseURL: API });
+    const inst = axios.create({ baseURL: API, timeout: REQUEST_TIMEOUT_MS });
     inst.interceptors.request.use(async (cfg) => {
       const t = await getToken();
       if (t) cfg.headers.Authorization = `Bearer ${t}`;

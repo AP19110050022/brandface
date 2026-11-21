@@ -1,188 +1,142 @@
 {
-  "project_name": "HireAvatar Companion App",
-  "app_archetype": "Dark Violet Social-First Mobile Experience",
-  "design_direction": {
-    "style": "Social media native app with luminous violet, electric blue, and magenta highlights; strictly avoid boring job portal/admin table aesthetics.",
-    "emotional_tone": "Electric, premium, community-driven, fast, nocturnal-creator energy",
-    "supported_platforms": ["Android", "iPhone (iOS)"],
-    "deep_link_scheme": "co.hireavatar.app://auth/callback"
+  "project_name": "HireAvatar Native Mobile Polish (Android & iOS)",
+  "context": "Native hybrid APK/iOS social-marketplace app shell where status icons overlapped header, zoom jitter occurred, sign-in looked like generic AI-SaaS slop, and perceived speed was lagging.",
+  "theme": "dark_immersive_violet",
+  "emotional_archetype": "ARCHETYPE 5: LUXURY & ELECTRIC SOCIAL (Midnight Violet & Neon Bloom)",
+  "viewport_specs": {
+    "target_devices": "Android (360px–430px wide, e.g. Pixel 7, Galaxy S23) and iPhone (375px–430px, e.g. iPhone 14/15 Pro)",
+    "meta_viewport": "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    "touch_action": "pan-x pan-y",
+    "overflow_x": "hidden"
+  },
+  "safe_area_system": {
+    "topbar": {
+      "strategy": "Apply padding-top with env(safe-area-inset-top, 0px) plus an intentional Android status clearance minimum (min 28px–36px in APK webview).",
+      "classes": "pt-[max(env(safe-area-inset-top),28px)] bg-[#1A1046]/95 backdrop-blur-2xl border-b border-white/10",
+      "height": "calc(56px + max(env(safe-area-inset-top), 28px))",
+      "avoidance": "Never use pure transparent header; prevent status bar battery/time/wifi indicators from colliding with logo and icon actions."
+    },
+    "bottom_dock": {
+      "strategy": "Floating pill dock with safe-bottom spacer and backdrop blur so content never overlaps and Android navigation bar/gesture pill has breathing space.",
+      "classes": "fixed inset-x-3 bottom-[max(env(safe-area-inset-bottom),12px)] z-40 mx-auto max-w-md pb-[env(safe-area-inset-bottom)]",
+      "dock_container": "flex h-[62px] items-center justify-around rounded-[32px] bg-[#170E3B]/90 backdrop-blur-xl border border-white/15 shadow-[0_16px_36px_rgba(5,2,24,0.65)] px-2",
+      "main_content_bottom_padding": "pb-[calc(84px+env(safe-area-inset-bottom,16px))]"
+    }
   },
   "typography": {
-    "heading_font": "Outfit, sans-serif",
+    "headline_font": "Outfit, sans-serif",
     "body_font": "Plus Jakarta Sans, sans-serif",
-    "scale": {
-      "display_hero": "text-4xl sm:text-5xl font-extrabold tracking-tight",
-      "screen_title": "text-2xl font-bold tracking-tight",
-      "section_header": "text-lg font-semibold tracking-normal",
-      "card_title": "text-base font-semibold",
-      "body_primary": "text-sm leading-relaxed",
-      "body_secondary": "text-xs text-muted-foreground leading-normal",
-      "badge_meta": "text-[11px] font-bold uppercase tracking-wider"
+    "hierarchy": {
+      "h1_hero": "text-2xl sm:text-3xl font-extrabold tracking-tight text-white",
+      "h2_section": "text-lg sm:text-xl font-bold tracking-tight text-white",
+      "h3_card_title": "text-sm sm:text-base font-bold text-white leading-snug",
+      "badge_and_overlines": "text-[10px] uppercase tracking-[0.16em] font-extrabold",
+      "body_text": "text-xs sm:text-sm text-white/80 leading-relaxed",
+      "price_tag": "text-[11.5px] font-extrabold text-[#24126A] bg-white rounded-full px-2.5 py-0.5"
     }
   },
   "colors": {
-    "background_gradient": "linear-gradient(180deg, #2A1B7A 0%, #4530C8 38%, #33209A 70%, #1F1150 100%)",
-    "primary_dark_anchor": "#1F1150",
-    "deep_violet": "#2A1B7A",
-    "electric_indigo": "#4530C8",
-    "card_surface": "rgba(255, 255, 255, 0.08)",
-    "glass_border": "rgba(255, 255, 255, 0.16)",
-    "brand_cta_gradient": "linear-gradient(90deg, #FF5FA2 0%, #B35CFF 55%, #7C5CFF 100%)",
-    "accent_pink": "#FF5FA2",
-    "accent_violet": "#7C5CFF",
-    "accent_amber_story": "#FFB86B",
+    "background_gradient": "linear-gradient(180deg, #160D3D 0%, #251666 40%, #1A0E46 75%, #0F0826 100%)",
+    "surface_glass": "rgba(255, 255, 255, 0.08)",
+    "surface_glass_border": "rgba(255, 255, 255, 0.16)",
+    "primary_accent": "#FF4D8D",
+    "brand_purple": "#7C5CFF",
+    "brand_deep_violet": "#351E8C",
+    "online_status_green": "#4ADE80",
     "text_primary": "#FFFFFF",
-    "text_secondary": "#E3DCFF",
-    "text_muted": "rgba(227, 220, 255, 0.65)",
-    "success_mint": "#10B981",
-    "danger_blaze": "#EF4444"
+    "text_secondary": "rgba(255, 255, 255, 0.72)",
+    "text_tertiary": "rgba(255, 255, 255, 0.48)"
   },
-  "mobile_safe_areas_and_viewports": {
-    "ios_status_bar": "pt-[max(env(safe-area-inset-top),44px)]",
-    "ios_home_indicator": "pb-[max(env(safe-area-inset-bottom),20px)]",
-    "android_status_bar": "pt-[24px]",
-    "bottom_nav_dock_height": "h-16 pb-safe",
-    "max_viewport_width": "max-w-md mx-auto",
-    "touch_target_minimum": "min-h-[44px] min-w-[44px]"
-  },
-  "mobile_navigation": {
-    "type": "Floating Glass Bottom Tab Bar (Docked)",
-    "items": [
-      {
-        "id": "discover",
-        "label": "Discover",
-        "icon": "Compass",
-        "route": "/app",
-        "data_testid": "nav-tab-discover"
-      },
-      {
-        "id": "deals",
-        "label": "Deals",
-        "icon": "Briefcase",
-        "route": "/app/deals",
-        "data_testid": "nav-tab-deals"
-      },
-      {
-        "id": "chat",
-        "label": "Inbox",
-        "icon": "MessageSquare",
-        "route": "/app/chat",
-        "badge": "unread_count",
-        "data_testid": "nav-tab-chat"
-      },
-      {
-        "id": "notifications",
-        "label": "Alerts",
-        "icon": "Bell",
-        "route": "/app/notifications",
-        "data_testid": "nav-tab-notifications"
-      },
-      {
-        "id": "profile",
-        "label": "Me",
-        "icon": "User",
-        "route": "/app/profile",
-        "data_testid": "nav-tab-profile"
-      }
+  "native_signin_redesign": {
+    "anti_ai_slop_principles": [
+      "Remove generic centered corporate SaaS badges ('Secure creator access' pills with shield icons).",
+      "Eliminate bland 48px standard enterprise forms with generic white cards.",
+      "Make sign-in feel like an ultra-slick native social app: TikTok, BeReal, or Instagram-grade dark glass presentation.",
+      "Display an editorial creator avatar reel or dynamic ambient backdrop that connects directly to the talent marketplace.",
+      "Group credentials into an iOS/Android compact grouped input container with integrated 1px divider, subtle focus rings, and high contrast typography."
     ],
-    "surface_treatment": "bg-[#241464]/90 backdrop-blur-xl border-t border-white/10 shadow-[0_-8px_30px_rgba(10,5,40,0.5)]"
-  },
-  "first_signed_out_screen": {
-    "visual_hierarchy": [
-      "Nocturnal gradient backdrop with subtle noise grain and glowing radial purple aura",
-      "Dynamic creator story carousel with gradient active rings (#FF5FA2 -> #FFB86B -> #7C5CFF)",
-      "High-energy hook heading: 'Collab with Top Digital & IRL Creators'",
-      "Social-proof pill badge: '★ 1,200+ Verified Creator Deals Active'",
-      "Primary full-width CTA: 'Continue with Google / Apple' utilizing Clerk SSO",
-      "Secondary action: 'Explore Creator Directory as Guest' for zero-barrier preview",
-      "Footer legal & secure badge with 12px muted text"
-    ],
-    "interactive_elements": {
-      "primary_btn_testid": "btn-signed-out-get-started",
-      "guest_btn_testid": "btn-signed-out-guest-browse",
-      "clerk_sign_in_testid": "btn-clerk-native-auth"
+    "compact_layout_structure": {
+      "top_bar": "Compact header with rounded circular back button, small brand mark, and status-bar offset.",
+      "hero_block": "Punchy 2-line title ('Step into HireAvatar' / 'Sign in to direct, hire, or present') with compact spacing (mb-4 instead of massive mb-9).",
+      "primary_action": "High-contrast one-tap Google auth button styled natively with sharp tactile micro-press.",
+      "divider": "Subtle 1px line with 'or continue with email' at 10px bold uppercase tracking.",
+      "grouped_fields": "Stacked input pill with email on top and password below, rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-md.",
+      "cta_button": "Gradient pill (from #FF4D8D via #B35CFF to #7C5CFF) with spring micro-interaction and tactile active:scale-95.",
+      "toggle_footer": "Compact footer switcher with high-contrast link for switching between Sign In and Sign Up."
     }
   },
-  "auth_callback_and_sign_in_return": {
-    "scheme": "co.hireavatar.app://auth/callback",
-    "flow_description": "Native mobile sign-in returns via custom scheme redirect handled by Clerk and Capacitor App listener. On successful token exchange, immediately hydrate MeProvider and transition to target screen.",
-    "state_restoration": {
-      "loading_view": "Pulsing violet ring spinner with 'Synchronizing your creator pass...'",
-      "error_fallback": "Glass card with 'Retry authentication' action and manual web fallback",
-      "data_testid_loading": "auth-callback-loading-indicator",
-      "data_testid_retry": "auth-callback-retry-button"
+  "discovery_grid_specs": {
+    "viewport_fit": "Exact 2-column grid on 360px–430px mobile screens without edge overflow or horizontal scroll jitter.",
+    "container_padding": "px-3.5 sm:px-5",
+    "grid_classes": "grid grid-cols-2 gap-2.5 sm:gap-3.5 md:grid-cols-3 lg:grid-cols-4",
+    "card_aspect_ratio": "aspect-[3/4.2] sm:aspect-[3/4]",
+    "card_structure": {
+      "image_zoom_safe": "object-cover w-full h-full rounded-[20px] will-change-transform",
+      "overlay_scrim": "linear-gradient(180deg, rgba(15,8,38,0.2) 0%, rgba(15,8,38,0) 35%, rgba(15,8,38,0.85) 80%, rgba(15,8,38,0.98) 100%)",
+      "live_indicator": "8px emerald dot with subtle pulse for online presenters",
+      "text_truncation": "Strict truncate on creator name and category to guarantee no multi-line wrapping breaks card heights"
     }
   },
-  "discovery_and_profile_composition": {
-    "discovery_feed": {
-      "layout": "Asymmetrical 2-column masonry or swipeable vertical reel cards with video/avatar badge overlays",
-      "creator_card": {
-        "aspect_ratio": "aspect-[4/5]",
-        "elements": [
-          "Creator full-bleed portrait with bottom gradient scrim (black/60 to transparent)",
-          "Verification checkmark & category tag (e.g. 'Virtual Influencer', 'TikTok AI', 'Fashion')",
-          "Engagement rate & starting offer badge ($250+ / collab)",
-          "Quick-action: Bookmark (Heart) and Quick Chat button"
-        ],
-        "data_testid": "card-creator-discovery-item"
-      }
-    },
-    "creator_business_profile": {
-      "header": "Full-bleed glowing banner with overlapping rounded avatar, gradient story border, stats ribbon (Followers, Completed Deals, Rating 4.9)",
-      "tabs": ["Portfolio / Reels", "Collab Packages", "Reviews", "Bio & Links"],
-      "sticky_bottom_bar": "Always visible glass CTA bar: 'Make an Offer' (brand gradient button) + 'Chat' icon button",
-      "data_testid_offer_cta": "btn-profile-make-offer",
-      "data_testid_chat_cta": "btn-profile-start-chat"
-    }
+  "perceived_performance_strategy": {
+    "problem": "App felt dead slow during navigation, tab switching, and initial load.",
+    "solutions": [
+      "Immediate Skeleton Shimmer: Replace centered spinning Loader2 wheels with animated 2-column skeleton creator cards that match the layout 1:1 instantly.",
+      "Optimistic UI on likes and saves: toggle state locally immediately before waiting for API network acknowledgment.",
+      "Image progressive loading: add blurred micro-color placeholder behind cards before full resolution loads.",
+      "Hardware-accelerated animations: use transform and opacity only (will-change-transform, translate3d). Never animate height or margin.",
+      "Memory efficient list rendering: limit initial DOM nodes and cache API responses in React state."
+    ]
   },
-  "chat_and_deals_social_patterns": {
-    "chat_room": {
-      "style": "Fast messaging feed with custom bubble gradients (sent: brand-gradient violet/pink, received: glass-soft white/10)",
-      "embedded_deal_card": "Interactive mini-card inside chat showing Deal Status (Pitching -> In Escrow -> Completed) with instant 'Review Offer' action",
-      "data_testid_deal_card": "chat-deal-status-card"
-    },
-    "deals_manager": {
-      "style": "Instagram/TikTok Shop styled deals kanban/list: segmented tabs ('Pending', 'In Progress', 'Delivered')",
-      "data_testid_deal_item": "deal-list-row-item"
-    }
-  },
-  "content_density_and_accessibility": {
-    "spacing_scale": "Strictly 8pt grid with mobile touch buffers (p-4 for screen container, gap-3 for cards, p-5 for modal drawers)",
-    "contrast_ratio": "APCA-compliant text contrast (all white text against minimum #2A1B7A or overlay scrim bg-black/60)",
-    "no_transparent_surfaces": "Dropdowns, bottom drawers, and sticky headers MUST use solid or saturated backdrop glass (bg-[#241464]/95 or higher) to avoid content bleed",
-    "reduced_motion": "Wrap framer-motion springs in prefers-reduced-motion checks; fallback to instant opacity transitions"
+  "component_path": {
+    "app_shell": "/app/frontend/src/components/layout/AppShell.jsx",
+    "native_auth": "/app/frontend/src/components/auth/NativeAuthScreen.jsx",
+    "discover_page": "/app/frontend/src/pages/Discover.jsx",
+    "creator_card": "/app/frontend/src/components/CreatorCard.jsx",
+    "index_html": "/app/frontend/public/index.html",
+    "index_css": "/app/frontend/src/index.css"
   },
   "image_urls": [
     {
-      "category": "creator_portraits",
-      "url": "https://images.unsplash.com/photo-1708616748538-bdd66d6a9e25?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHw0fHxhdmF0YXIlMjBjcmVhdG9yJTIwcG9ydHJhaXQlMjBuZW9ufGVufDB8fHx8MTc5NTI4MjI5MXww&ixlib=rb-4.1.0&q=85",
-      "description": "Woman creator in front of neon glow - perfect for top featured hero creator profile",
-      "component_placement": "First signed-out hero reel & discovery featured creator card"
+      "category": "creator_avatar_1",
+      "url": "https://images.unsplash.com/photo-1740252117013-4fb21771e7ca?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwzfHxhdmF0YXIlMjBjcmVhdG9yJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzk1Mjg1MzcwfDA&ixlib=rb-4.1.0&q=85",
+      "description": "3D Stylized digital creator avatar with blue cap, perfect for mobile showcase badge or sample card"
     },
     {
-      "category": "creator_portraits",
-      "url": "https://images.unsplash.com/photo-1613698808499-f772ccb4f527?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwzfHxhdmF0YXIlMjBjcmVhdG9yJTIwcG9ydHJhaXQlMjBuZW9ufGVufDB8fHx8MTc5NTI4MjI5MXww&ixlib=rb-4.1.0&q=85",
-      "description": "Creator with eyeglasses and ambient dual-tone lighting",
-      "component_placement": "Discovery grid item and business deal room avatar"
+      "category": "creator_avatar_2",
+      "url": "https://images.unsplash.com/photo-1740252117012-bb53ad05e370?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHw0fHxhdmF0YXIlMjBjcmVhdG9yJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzk1Mjg1MzcwfDA&ixlib=rb-4.1.0&q=85",
+      "description": "Artistic creator avatar with purple hoodie and vibrant expression"
     },
     {
-      "category": "creator_portraits",
-      "url": "https://images.unsplash.com/photo-1530651788726-1dbf58eeef1f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTZ8MHwxfHNlYXJjaHwyfHxhdmF0YXIlMjBjcmVhdG9yJTIwcG9ydHJhaXQlMjBuZW9ufGVufDB8fHx8MTc5NTI4MjI5MXww&ixlib=rb-4.1.0&q=85",
-      "description": "Futuristic neon triangle halo framing digital artist creator",
-      "component_placement": "Creator profile screen hero header and story showcase"
+      "category": "creator_avatar_3",
+      "url": "https://images.unsplash.com/photo-1740252117027-4275d3f84385?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwyfHxhdmF0YXIlMjBjcmVhdG9yJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzk1Mjg1MzcwfDA&ixlib=rb-4.1.0&q=85",
+      "description": "Female avatar with lilac hair and glasses, representing vibrant creator styles"
     },
     {
-      "category": "mobile_context",
-      "url": "https://images.unsplash.com/photo-1622532832487-b18b9c7f23d3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwzfHxzb2NpYWwlMjBtZWRpYSUyMGNyZWF0b3IlMjBtb2JpbGUlMjBwaG9uZXxlbnwwfHx8fDE3OTUyODIyOTF8MA&ixlib=rb-4.1.0&q=85",
-      "description": "Mobile creator holding smartphone navigating social app feed",
-      "component_placement": "Sign-in onboarding card and app store preview mock"
+      "category": "creator_studio_real_1",
+      "url": "https://images.pexels.com/photos/20040023/pexels-photo-20040023.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Real presenter in podcasting studio with ring light and camera microphone"
+    },
+    {
+      "category": "creator_studio_real_2",
+      "url": "https://images.pexels.com/photos/16398995/pexels-photo-16398995.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Video presenter wearing headphones in broadcast studio"
     }
   ],
   "instructions_to_main_agent": [
-    "Never replace the nocturnal dark violet (#2A1B7A to #1F1150) gradient with sterile grey or white SaaS backgrounds.",
-    "Ensure all interactive components and action targets include the stipulated data-testid attributes.",
-    "Keep bottom navigation dock floating above the iOS home bar and Android system buttons with safe-area padding.",
-    "Support Clerk's native redirect scheme 'co.hireavatar.app://auth/callback' without blocking the user on blank screens.",
-    "Avoid flat job-board layouts; use social-media reels, cards, stories, and badges."
-  ]
+    "1. In /app/frontend/public/index.html, enforce strict mobile viewport parameters to eliminate unwanted pinch-zoom/zoom jitter on input focus: set content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'.",
+    "2. In /app/frontend/src/index.css, add html, body { touch-action: pan-x pan-y; overflow-x: hidden; -webkit-tap-highlight-color: transparent; } to eliminate horizontal drift and zooming anomalies.",
+    "3. In /app/frontend/src/components/layout/AppShell.jsx, overhaul TopBar to include pt-[max(env(safe-area-inset-top),28px)] and safe top padding so Android/iOS status icons (time, battery, signal) never clip the logo, back button, or action pills. Maintain solid glass blur bg-[#170E3B]/95 instead of transparent overlay.",
+    "4. Overhaul BottomNav in AppShell to float above the home indicator using pb-[env(safe-area-inset-bottom,12px)] and give <main> pb-[calc(88px+env(safe-area-inset-bottom,16px))] so cards at the bottom are never hidden behind the navigation dock.",
+    "5. In /app/frontend/src/components/auth/NativeAuthScreen.jsx, strip out AI-slop corporate badges ('Secure creator access', generic shields, huge redundant copy). Replace with an Instagram/TikTok style compact dark-glass container, unified input group, crisp social button, and high-energy typography.",
+    "6. In /app/frontend/src/pages/Discover.jsx, replace blank screen / single spinner with an immediate 2-column skeleton grid (6 skeleton cards) during fetch states. Ensure grid-cols-2 has gap-2.5 on mobile so two cards fit seamlessly within 360px–430px widths without clipping or horizontal scrolling.",
+    "7. In /app/frontend/src/components/CreatorCard.jsx, enforce aspect-[3/4.2], rounded-[20px], and tight typography so titles and pricing badges stay legible and balanced on compact Android screens.",
+    "8. Retain all data-testid attributes faithfully for automated regression test suites."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": {
+    "viewport_integrity": "Prevent horizontal scrolling at all costs with w-full max-w-full overflow-x-hidden on the mobile shell.",
+    "mobile_touch": "Ensure all interactive tap targets are at least 44x44px and have subtle active:scale-95 feedback without sticky hover states.",
+    "status_bar_safety": "Always use env(safe-area-inset-top) with a fallback (28px minimum on Android APK) for any sticky or fixed top navigation.",
+    "skeleton_previews": "Never present a blank screen or plain spinner when content is loading; provide layout-mirroring skeletons for immediate perceived responsiveness.",
+    "color_purity": "Preserve the rich midnight violet and electric pink theme without introducing generic SaaS blues or muddy gradients."
+  }
 }

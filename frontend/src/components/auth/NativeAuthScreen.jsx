@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Chrome, KeyRound, Loader2, Mail, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Chrome, KeyRound, Loader2, Mail } from "lucide-react";
 import { useSSO, useSignIn, useSignUp } from "capacitor-clerk";
-import { authEvent } from "@/lib/track";
 import { Logo } from "@/components/Logo";
 
 const CALLBACK_URL = "co.hireavatar.app://auth/callback";
@@ -13,9 +12,9 @@ const errorMessage = (errors) => {
   return global || fields[0]?.message || "";
 };
 
-const Field = ({ label, testid, type = "text", value, onChange, inputMode }) => (
-  <label className="block text-sm font-bold text-white/90">
-    {label}
+const Field = ({ compact = false, label, testid, type = "text", value, onChange, inputMode }) => (
+  <label className={compact ? "block" : "block text-sm font-bold text-white/90"}>
+    <span className={compact ? "sr-only" : ""}>{label}</span>
     <input
       data-testid={testid}
       type={type}
@@ -25,13 +24,16 @@ const Field = ({ label, testid, type = "text", value, onChange, inputMode }) => 
       value={value}
       onChange={(event) => onChange(event.target.value)}
       required
-      className="mt-2 h-12 w-full rounded-2xl border border-white/20 bg-white/10 px-4 text-base text-white outline-none transition-[border-color,background-color] placeholder:text-white/45 focus:border-[#FF5FA2] focus:bg-white/15"
+      placeholder={compact ? label : undefined}
+      className={compact
+        ? "h-12 w-full bg-transparent px-4 text-base text-white outline-none placeholder:text-white/45"
+        : "mt-2 h-12 w-full rounded-2xl border border-white/20 bg-white/10 px-4 text-base text-white outline-none transition-[border-color,background-color] placeholder:text-white/45 focus:border-[#FF5FA2] focus:bg-white/15"}
     />
   </label>
 );
 
 const AuthFrame = ({ children, mode, onBack }) => (
-  <div className="min-h-screen px-5 pb-10 pt-[max(env(safe-area-inset-top),2rem)] text-white">
+  <div className="native-auth-screen min-h-screen px-5 text-white">
     <div className="mx-auto max-w-md">
       <button
         type="button"
@@ -42,22 +44,20 @@ const AuthFrame = ({ children, mode, onBack }) => (
       >
         <ArrowLeft className="h-5 w-5" />
       </button>
-      <div className="mt-9">
-        <Logo size="text-[36px]" />
-        <span className="mt-7 inline-flex items-center gap-1.5 rounded-full border border-[#FF5FA2]/50 bg-[#FF5FA2]/15 px-3 py-1.5 text-xs font-extrabold text-[#FFE1EF]">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          Secure creator access
-        </span>
-        <h1 className="mt-4 text-4xl font-extrabold leading-tight">
-          {mode === "sign-up" ? "Start your creator story." : "Welcome back."}
+      <div className="mt-7">
+        <Logo size="text-[30px]" />
+        <h1 className="mt-6 text-[28px] font-extrabold leading-tight">
+          {mode === "sign-up" ? "Create your account." : "Sign in to HireAvatar."}
         </h1>
-        <p className="mt-2 text-base leading-relaxed text-white/75">
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
           {mode === "sign-up"
-            ? "Create one account to present, hire, or do both."
-            : "Pick up your next creator deal right where you left it."}
+            ? "One account to become a presenter, hire one, or do both."
+            : "Your conversations, offers, and creator work are waiting."}
         </p>
       </div>
-      <div className="glass mt-8 rounded-[28px] p-5">{children}</div>
+      <div className="mt-6 rounded-[24px] border border-white/15 bg-[#170E3B]/70 p-4 shadow-[0_16px_36px_rgba(5,2,24,.35)]">
+        {children}
+      </div>
     </div>
   </div>
 );
@@ -301,20 +301,25 @@ export default function NativeAuthScreen({ mode }) {
           or with email
           <span className="h-px flex-1 bg-white/15" />
         </div>
-        <Field
-          label="Email address"
-          testid="native-auth-email-input"
-          type="email"
-          value={email}
-          onChange={setEmail}
-        />
-        <Field
-          label="Password"
-          testid="native-auth-password-input"
-          type="password"
-          value={password}
-          onChange={setPassword}
-        />
+        <div className="overflow-hidden rounded-2xl border border-white/15 bg-white/[.06]">
+          <Field
+            compact
+            label="Email address"
+            testid="native-auth-email-input"
+            type="email"
+            value={email}
+            onChange={setEmail}
+          />
+          <div className="mx-4 h-px bg-white/15" />
+          <Field
+            compact
+            label="Password"
+            testid="native-auth-password-input"
+            type="password"
+            value={password}
+            onChange={setPassword}
+          />
+        </div>
         {(ssoError || formError || errorMessage(errors)) && (
           <ErrorText>{ssoError || formError || errorMessage(errors)}</ErrorText>
         )}

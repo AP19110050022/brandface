@@ -5,8 +5,8 @@ import { PLAN_BY_ID } from "@/constants/options";
 
 export const CreatorCard = ({ c, saved, onToggleSave, to, index = 0 }) => (
   <div className="rise group relative" style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }} data-testid={`creator-card-${c.user_id}`}>
-    <Link to={to || `/app/creator/${c.user_id}`} className="card-shadow relative block aspect-[3/4] overflow-hidden rounded-[22px] bg-[#6C4CF1] text-white transition-transform duration-200 active:scale-[.98]">
-      <img src={c.photo} alt={c.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+    <Link to={to || `/app/creator/${c.user_id}`} className="card-shadow relative block aspect-[3/4.2] overflow-hidden rounded-[20px] bg-[#6C4CF1] text-white transition-transform duration-200 active:scale-[.98] sm:aspect-[3/4]">
+      <img src={c.photo} alt={c.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 will-change-transform group-hover:scale-105" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,5,40,.28)_0%,rgba(10,5,40,0)_26%,rgba(10,5,40,0)_42%,rgba(10,5,40,.92)_100%)]" />
       <div className="absolute left-2.5 right-12 top-2.5 flex flex-wrap gap-1">
         {(c.plans || []).slice(0, 1).map((p) => <span key={p} className="flex h-[22px] items-center rounded-full bg-[rgba(10,5,40,.5)] px-2.5 text-[10.5px] font-bold backdrop-blur" data-testid={`card-plan-${p}`}>{PLAN_BY_ID[p]?.label}</span>)}

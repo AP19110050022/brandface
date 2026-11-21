@@ -27,7 +27,7 @@ export function MeProvider({ children }) {
 
   useEffect(() => {
     refresh();
-    publicApi.get("/config").then((r) => setConfig(r.data));
+    publicApi.get("/config").then((r) => setConfig(r.data)).catch(() => setConfig(null));
   }, [refresh]);
 
   useEffect(() => {

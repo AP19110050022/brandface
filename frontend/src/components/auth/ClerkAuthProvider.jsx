@@ -29,6 +29,28 @@ export default function ClerkAuthProvider({ children }) {
   const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
+    if (!Capacitor.isNativePlatform()) {
+      return undefined;
+    }
+
+    const root = document.documentElement;
+    const viewport = document.querySelector('meta[name="viewport"]');
+    const previousViewport = viewport?.getAttribute("content");
+    root.classList.add("native-app");
+    viewport?.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+    );
+
+    return () => {
+      root.classList.remove("native-app");
+      if (previousViewport) {
+        viewport?.setAttribute("content", previousViewport);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     const load = async (attempt = 0) => {
       try {

@@ -1,7 +1,7 @@
 import { ReportButton } from "@/components/ReportButton";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { Users, Store, MapPin, ChevronDown, Loader2, SearchX, Clock, Plus, Search, Bookmark } from "lucide-react";
+import { Users, Store, MapPin, ChevronDown, Loader2, SearchX, Clock, Plus, Search, Bookmark, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
@@ -12,6 +12,7 @@ import { LocationPicker, locLabel } from "@/components/LocationPicker";
 import { Seg, Empty } from "@/components/AppBits";
 import { CATEGORIES, PLAN_BY_ID } from "@/constants/options";
 import { useMe } from "@/context/MeContext";
+import { publicApi } from "@/lib/api";
 
 const Banner = ({ me, openPlus }) => {
   if (me.creator?.status === "pending") {
@@ -53,6 +54,30 @@ const LocationPill = ({ filters, onChange }) => {
 };
 
 const locParams = (f) => Object.fromEntries(LOC_KEYS.map((k) => [k, f[k]]).filter(([, v]) => v));
+
+const CreatorGridSkeleton = () => (
+  <div className="mt-3 grid grid-cols-2 gap-2.5 md:grid-cols-3 lg:grid-cols-4" data-testid="creator-grid-skeleton">
+    {Array.from({ length: 6 }, (_, index) => (
+      <div key={index} className="creator-skeleton aspect-[3/4.2] rounded-[20px] sm:aspect-[3/4]" />
+    ))}
+  </div>
+);
+
+const CreatorLoadError = ({ onRetry }) => (
+  <div className="mt-4 rounded-[22px] border border-white/15 bg-white/[.07] p-5 text-center" data-testid="creator-load-error">
+    <p className="text-base font-extrabold">Couldn’t load presenters</p>
+    <p className="mt-1 text-sm text-white/70">Check your connection, then try again.</p>
+    <button
+      type="button"
+      onClick={onRetry}
+      data-testid="creator-load-retry-button"
+      className="mt-4 inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-extrabold text-[#261567] active:scale-[.98]"
+    >
+      <RefreshCw className="h-4 w-4" />
+      Try again
+    </button>
+  </div>
+);
 
 export const BusinessCard = ({ b, i, onOpen, saved, onToggleSave }) => (
   <div className="relative">
@@ -155,16 +180,22 @@ export default function Discover({ search = false }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const sort = filters.sort;
   const [list, setList] = useState(null);
+  const [loadError, setLoadError] = useState("");
   const [saved, setSaved] = useState([]);
 
   const load = useCallback(async () => {
     const params = { q, ...Object.fromEntries(Object.entries(filters).filter(([, v]) => v)) };
-    const { data } = await api.get("/creators", { params });
-    setList(data);
-  }, [api, filters, q]);
+    setLoadError("");
+    try {
+      const { data } = await publicApi.get("/creators", { params });
+      setList(data);
+    } catch (error) {
+      setLoadError(error?.code === "ECONNABORTED" ? "timeout" : "network");
+    }
+  }, [filters, q]);
 
   useEffect(() => { const t = setTimeout(load, 250); return () => clearTimeout(t); }, [load]);
-  useEffect(() => { api.get("/saved/ids").then((r) => setSaved(r.data)); }, [api]);
+  useEffect(() => { api.get("/saved/ids").then((r) => setSaved(r.data)).catch(() => {}); }, [api]);
 
   const toggleSave = async (id, kind = "creator") => {
     const on = saved.includes(id);
@@ -198,7 +229,7 @@ export default function Discover({ search = false }) {
             ))}
           </div>
           {list && <p className="mt-3 text-xs text-white/75" data-testid="discover-count">{list.length} presenters{filters.city ? ` in and around ${filters.city}${filters.radius_km ? ` (${filters.radius_km} km)` : ""}` : filters.state ? ` in ${filters.state}` : " across India"}{sort !== "recommended" ? ` · ${{ nearest: "nearest first", price_asc: "price low to high", price_desc: "price high to low", rating: "top rated", newest: "newest" }[sort]}` : ""}. Profiles marked Sample are examples.</p>}
-          {list === null ? <div className="grid place-items-center py-20"><Loader2 className="h-7 w-7 animate-spin" /></div>
+          {list === null ? (loadError ? <CreatorLoadError onRetry={load} /> : <CreatorGridSkeleton />)
             : list.length === 0 ? (
               <div className="mt-4"><Empty icon={SearchX} title="No presenters match" text={filters.city ? "Try a bigger distance, or choose the whole state." : "Try another location or clear your filters."} testid="discover-empty"
                 action={<button className="mt-4 rounded-full bg-white px-5 py-2 text-sm font-bold text-[#3B25A8]" onClick={() => { setFilters(EMPTY_FILTERS); setQ(""); }}>Clear filters</button>} /></div>

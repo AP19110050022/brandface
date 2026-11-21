@@ -42,7 +42,7 @@ export const TopBar = ({ me, showBack }) => (
 );
 
 const BottomNav = ({ onPlus }) => (
-  <nav className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-md">
+  <nav className="mobile-bottom-nav fixed inset-x-3 bottom-3 z-40 mx-auto max-w-md">
     <div className="flex h-[66px] items-center justify-around rounded-[33px] bg-white/[.97] px-1.5 shadow-[0_12px_30px_rgba(10,5,40,.4)]">
       {NAV.map((n, i) =>
         n ? (
@@ -108,7 +108,7 @@ export default function AppShell() {
   return (
     <div className="min-h-screen text-white">
       <TopBar me={me} showBack={showBack} />
-      <main className="mx-auto max-w-6xl px-4 pb-32 pt-4 sm:px-6">
+      <main className="app-main-content mx-auto max-w-6xl px-3.5 pb-32 pt-4 sm:px-6">
         <Outlet context={{ openPlus: () => setPlus(true) }} />
       </main>
       <BottomNav onPlus={() => setPlus(true)} />
